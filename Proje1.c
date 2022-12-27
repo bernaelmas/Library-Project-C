@@ -48,6 +48,7 @@ int main()
 				printf("---Ogrenci Ekleme---\n");
 				
 				ogrenciEkle();
+                printf("Ogrenci Basariyla Eklendi.\n");
 			}
 			else if(islem==3){
 				printf("---Ana Menuye Don---\n");
@@ -60,7 +61,7 @@ int main()
 				printf("---Yanlis Tuslama Yaptiniz!---\n");
 			}
 		}
-		else if (islem==2) 
+		else if (islem==2)
 		{
             printf("----------\n");
 			printf("---Kitap Isleri---\n");
@@ -92,7 +93,7 @@ int main()
                 scanf("%s", kitap_adi);
 
                 kitapAlma(ad, soyad, kitap_adi);
-
+                printf("\n");
                 printf("Kitap basariyla odunc alindi.\n");
 
             }
@@ -148,28 +149,20 @@ void ogrenciListesi()
 {
 	FILE *dosya;
 	char veri[100], veri1[100];
-	
 	dosya = fopen("kitapAlmayanOgrenci.txt","r");
-	
 	while (fscanf(dosya,"%s %s",veri,veri1) != EOF){
 		printf("%s %s\n",veri,veri1);
 	}
-	
 	fclose(dosya);
-	
-	FILE *dosya1;
+
+    FILE *dosya1;
 	char veri2[100], veri3[100];
-	
 	dosya1 = fopen("kitapAlanOgrenci.txt","r");
-	
 	while (fscanf(dosya1,"%s %s",veri2,veri3) != EOF){
 		printf("%s %s\n",veri2,veri3);
 	}
-	
-	fclose(dosya1);	
-	
+	fclose(dosya1);
 }
-
 void ogrenciEkle ()
 {
 	char isim[50];
@@ -178,42 +171,32 @@ void ogrenciEkle ()
 	scanf("%s %s",&isim,&soyisim);
 	 
 	FILE *dosya = fopen("kitapAlmayanOgrenci.txt","a");
-	
 	fprintf(dosya, "%s %s\n",isim,soyisim);
-	
 	fclose(dosya);
 }
-
 void kitapListesi()
 {
 	FILE *dosya;
 	char satir[100];
-	
 	dosya = fopen("alinanKitap.txt","r");
 	while (fgets(satir,100,dosya) != NULL){
 		printf("%s",satir);
 	}
 	printf("\n");
-	
 	fclose(dosya);
 	
 	FILE *dosya1;
 	char satir2[100];
-	
 	dosya1 = fopen("alinmayanKitap.txt","r");
-	
 	while (fgets(satir2,100,dosya1) != NULL){
 		printf("%s",satir2);
 	}
-	
 	fclose(dosya1);
 	printf("\n");
-	
 }
-
 void kitapAlma(char *ad, char *soyad, char *kitap_adi){
 
-    // alinmayanKitaplar.txt dosyasýndan kitap adýný sil
+    // alinmayanKitap.txt dosyasýndan kitap adýný sil
     char line[200]; // okunan satýrý tutacak string
     char temp[200]; // yeni satýrlarý tutacak geçici string
     FILE *fp = fopen("alinmayanKitap.txt", "r"); // dosyayý okuma modunda aç
@@ -256,19 +239,12 @@ void kitapAlma(char *ad, char *soyad, char *kitap_adi){
     FILE *fp5 = fopen("ogrencivekitap.txt", "a"); // dosyayý ekleme modunda aç
     fprintf(fp5, "%s %s %s\n", ad, soyad, kitap_adi); // dosyaya öðrencinin adýný, soyadýný ve kitap adýný yaz
     fclose(fp5); // dosyayý kapat
-
 }
-
 void kitapEkle(char *ad){
-
     FILE *fp = fopen("alinmayanKitap.txt", "a"); // dosyayý ekleme modunda aç
     fprintf(fp, "%s\n", ad); // dosyaya kitap adýný yaz
     fclose(fp); // dosyayý kapat
-
-
-
 }
-
 void kitapIadesi(char *ad, char *soyad, char *kitap_adi) {
     char okuyucu[100]; // okuyucunun ad ve soyadýný tutacak string
     char line[200]; // okuyucunun bilgilerinin olduðu satýrý tutacak string
@@ -289,8 +265,39 @@ void kitapIadesi(char *ad, char *soyad, char *kitap_adi) {
         }
     }
     fclose(fp); // dosyayý kapat
-}
 
+    // kitapAlanOgrenci.txt dosyasýndan öðrenciyi sil
+    FILE *fp1 = fopen("kitapAlanOgrenci.txt", "r"); // dosyayý okuma modunda aç
+    fp1 = fopen("kitapAlanOgrenci.txt", "w"); // dosyayý yazma modunda aç
+    while(fgets(line, sizeof(line), fp1)) { // dosyadaki her satýrý oku
+        sscanf(line, "%s %s", okuyucu, soyad); // satýrdaki bilgileri parse et
+        if(strcmp(ad, okuyucu) != 0 && strcmp(soyad, soyad) != 0) { // eðer ad ve soyad doðru deðilse
+            fprintf(fp1, "%s", line); // satýrý dosyaya yaz
+        }
+    }
+    fclose(fp1); // dosyayý kapat
+
+// kitapAlmayanOgrenci.txt dosyasýna öðrenciyi ekle
+    fp = fopen("kitapAlmayanOgrenci.txt", "a"); // dosyayý ekleme modunda aç
+    fprintf(fp, "%s %s\n", ad, soyad); // dosyaya öðrencinin adýný ve soyadýný yaz
+    fclose(fp); // dosyayý kapat
+
+    // alinanKitap.txt dosyasýndan kitabý sil
+    fp = fopen("alinanKitap.txt", "r"); // dosyayý okuma modunda aç
+    fp = fopen("alinanKitap.txt", "w"); // dosyayý yazma modunda aç
+    while(fgets(okuyucu, sizeof(okuyucu), fp)) { // dosyadaki her satýrý oku
+        if(strstr(okuyucu, kitap_adi) == NULL) { // eðer okunan satýrda kitap adý yoksa
+            strcat(line, okuyucu); // geçici stringe ekle
+        }
+    }
+    fprintf(fp, "%s", line); // geçici stringi dosyaya yaz
+    fclose(fp); // dosyayý kapat
+
+// alinmayanKitap.txt dosyasýna kitabý ekle
+    fp = fopen("alinmayanKitap.txt", "a"); // dosyayý ekleme modunda aç
+    fprintf(fp, "%s\n", kitap_adi); // dosyaya kitap adýný yaz
+    fclose(fp); // dosyayý kapat
+}
 void kitapSil(char *kitap_adi) {
     char line[200]; // okunan satýrý tutacak string
     char temp[200]; // yeni satýrlarý tutacak geçici string

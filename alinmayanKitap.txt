@@ -1,5 +1,4 @@
 IkiSehrinHikayesi
-Sefiller
 DonKisot
 SucVeCeza
 KaranlikBirGecede
@@ -10,3 +9,7 @@ KuyucakliYusuf
 BulbuluOldurmek
 AtestenGomlek
 Kirginlar
+KucukPrens
+Sefiller
+Garibim
+BuzluSokak
